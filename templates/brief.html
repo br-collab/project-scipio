@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Scipio | 60-Second Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/brief.css') }}" />
+</head>
+<body>
+  <main class="brief-shell" data-scenario-id="{{ scenario_id or '' }}">
+    <section class="brief-hero">
+      <p class="eyebrow">Executive Narrative</p>
+      <h1>60-Second Brief</h1>
+      <p id="brief-page-summary" class="brief-page-summary">Loading thought process...</p>
+      <div class="brief-page-actions">
+        <a class="secondary-link" href="/" target="_blank" rel="noopener">Open Dashboard</a>
+        <button id="brief-page-export" type="button">Open Word Brief</button>
+      </div>
+    </section>
+
+    <section class="brief-grid">
+      <article class="brief-panel-page">
+        <div class="panel-head">
+          <h2>How I Think About It</h2>
+          <span class="pill">Senior SWE / CTO</span>
+        </div>
+        <div id="brief-page-points" class="stack"></div>
+      </article>
+
+      <article class="brief-panel-page accent">
+        <div class="panel-head">
+          <h2>Translation Layer</h2>
+          <span id="brief-page-operation" class="pill">Scenario</span>
+        </div>
+        <div class="stack">
+          <div class="stack-item">
+            <strong>User Promise</strong>
+            <p>The uploaded plan should become a visibly credible runnable scenario, not just a parsed document.</p>
+          </div>
+          <div class="stack-item">
+            <strong>Product Lens</strong>
+            <p>I focus on where user trust breaks: if the upload says it ran, replay, routes, and event log should materially support that claim.</p>
+          </div>
+          <div class="stack-item">
+            <strong>Engineering Ask</strong>
+            <p>Keep APIs and handcrafted scenarios stable, then improve only the OPORD-to-scenario synthesis layer where template inheritance is masking the uploaded content.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+  <footer class="brand-footer">Scipio, a Ravelo Strategic Solutions, LLC product.</footer>
+  <script>window.SCIPIO_BRIEF_SCENARIO = {{ (scenario_id or '')|tojson }};</script>
+  <script src="{{ url_for('static', filename='js/brief.js') }}"></script>
+</body>
+</html>

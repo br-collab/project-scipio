@@ -1,0 +1,16 @@
+.DS_Store
+.venv/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.so
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+scenarios/uploaded_scenario.json
+logs/*.log
+docs/**/*.DS_Store
+.server_pid

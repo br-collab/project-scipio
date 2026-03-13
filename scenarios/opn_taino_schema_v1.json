@@ -1,0 +1,418 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "opn_taino_schema_v1.json",
+  "title": "Project Scipio Scenario Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenario_id",
+    "operation",
+    "theater",
+    "description",
+    "center",
+    "tick_seconds",
+    "duration_ticks",
+    "blue_forces",
+    "red_forces",
+    "patrol_sectors",
+    "risk_zones",
+    "scripted_events"
+  ],
+  "properties": {
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theater": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "center": {
+      "$ref": "#/$defs/lat_lon"
+    },
+    "tick_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "duration_ticks": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "blue_forces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/blue_force"
+      }
+    },
+    "red_forces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/red_force"
+      }
+    },
+    "patrol_sectors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/patrol_sector"
+      }
+    },
+    "risk_zones": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/risk_zone"
+      }
+    },
+    "scripted_events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scripted_event"
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    }
+  },
+  "$defs": {
+    "lat_lon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lat", "lon"],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lon": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        }
+      }
+    },
+    "track_point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        }
+      ]
+    },
+    "blue_force": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "platform",
+        "heading",
+        "speed_kts",
+        "sensor_radius_km",
+        "default_sector_id",
+        "track"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "heading": {
+          "type": "number"
+        },
+        "speed_kts": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sensor_radius_km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "default_sector_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "track": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/track_point"
+          }
+        }
+      }
+    },
+    "red_force": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "lat",
+        "lon",
+        "priority",
+        "type",
+        "threat_radius_km"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lon": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "priority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "threat_radius_km": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "patrol_sector": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "lat",
+        "lon",
+        "radius_km",
+        "focus"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lon": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "radius_km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "focus": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "risk_zone": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "lat",
+        "lon",
+        "radius_km",
+        "weight",
+        "level"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lon": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "radius_km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "level": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "scripted_event": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "tick",
+        "type",
+        "severity",
+        "summary",
+        "detail"
+      ],
+      "properties": {
+        "tick": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "rule_condition": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["tick_gte", "tick_eq", "flag_set", "flag_absent", "detection_count_gte", "radar_detected", "uav_enters_ring", "roe_violated", "all_of", "any_of"]
+        },
+        "tick": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flag": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule_condition"
+          }
+        }
+      }
+    },
+    "rule_effect": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["set_phase", "set_flag", "clear_flag", "add_risk", "add_event"]
+        },
+        "phase": {
+          "type": "string"
+        },
+        "flag": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["string", "number", "boolean"]
+        },
+        "severity": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "condition", "effects"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "condition": {
+          "$ref": "#/$defs/rule_condition"
+        },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/rule_effect"
+          }
+        }
+      }
+    }
+  }
+}

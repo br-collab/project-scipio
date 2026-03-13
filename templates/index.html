@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Scipio Ops Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="mission-panel">
+        <div class="masthead">
+          <p class="eyebrow">Synthetic Operations Dashboard</p>
+          <h1>Project Scipio</h1>
+          <p id="scenario-description" class="lede">Loading scenario data...</p>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Scenario Loader</h2>
+            <div class="panel-actions">
+              <button id="scenario-upload-trigger" type="button" class="icon-button" aria-label="Upload scenario">
+                &#128206;
+              </button>
+              <span id="replay-state" class="pill pill-live">Standby</span>
+            </div>
+          </div>
+          <input id="scenario-upload-input" type="file" accept=".txt,.md,.json,.pdf,.docx" hidden />
+          <label class="field">
+            <span>Scenario</span>
+            <select id="scenario-select"></select>
+          </label>
+          <div class="upload-meta">
+            <span class="upload-label">Selected File</span>
+            <strong id="upload-filename">No file selected</strong>
+          </div>
+          <div class="upload-meta">
+            <span class="upload-label">Upload Status</span>
+            <strong id="upload-status" class="upload-status">No file loaded</strong>
+          </div>
+          <div id="upload-summary" class="upload-summary">Upload a `.txt`, `.md`, `.json`, `.pdf`, or `.docx` scenario file.</div>
+          <button id="run-uploaded-scenario" type="button" disabled>Run Scenario</button>
+        </section>
+
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>OPORD Staff Review</h2>
+            <span class="pill">Planner</span>
+          </div>
+          <div id="staff-review-body" class="upload-summary">No review generated yet.</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Event Log</h2>
+            <span id="event-count" class="pill">0</span>
+          </div>
+          <div id="event-log" class="stack event-log"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Layer Controls</h2>
+            <span class="pill">Map</span>
+          </div>
+          <label class="toggle"><span>Blue Forces</span><input id="toggle-blue" type="checkbox" checked /></label>
+          <label class="toggle"><span>Red Forces</span><input id="toggle-red" type="checkbox" checked /></label>
+          <label class="toggle"><span>Sensor Coverage</span><input id="toggle-sensors" type="checkbox" checked /></label>
+          <label class="toggle"><span>Threat Rings</span><input id="toggle-threats" type="checkbox" checked /></label>
+          <label class="toggle"><span>Risk Overlay</span><input id="toggle-risk" type="checkbox" checked /></label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Patrol Sector Reassignment</h2>
+            <span class="pill">Control</span>
+          </div>
+          <label class="field">
+            <span>Blue Unit</span>
+            <select id="unit-select"></select>
+          </label>
+          <label class="field">
+            <span>Patrol Sector</span>
+            <select id="sector-select"></select>
+          </label>
+          <button id="reassign-button" type="button">Apply Reassignment</button>
+        </section>
+
+        <section class="panel compact">
+          <div class="panel-head">
+            <h2>Risk Overlay</h2>
+            <span id="risk-label" class="pill pill-alert">Loading</span>
+          </div>
+          <div class="statline">
+            <span>Risk Score</span>
+            <strong id="risk-score">0</strong>
+          </div>
+          <div id="risk-zones" class="stack"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Blue Forces</h2>
+            <span id="blue-count" class="pill">0</span>
+          </div>
+          <div id="blue-list" class="stack"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Red Forces</h2>
+            <span id="red-count" class="pill">0</span>
+          </div>
+          <div id="red-list" class="stack"></div>
+        </section>
+      </div>
+    </aside>
+
+    <main class="main-stage">
+      <div class="map-panel">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">Theater</p>
+            <h2 id="operation-title">Loading operation...</h2>
+          </div>
+          <div class="metrics">
+            <div class="metric-card">
+              <span>Status</span>
+              <strong id="theater-name">Cuba</strong>
+            </div>
+            <div class="metric-card">
+              <span>Contacts</span>
+              <strong id="contact-count">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Timeline</span>
+              <strong id="tick-seconds">0 sec</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="map-wrap">
+          <div id="map"></div>
+          <div class="legend">
+            <div><span class="dot blue"></span>Blue force</div>
+            <div><span class="dot red"></span>Red force</div>
+            <div><span class="dot sensor"></span>Sensor radius</div>
+            <div><span class="dot threat"></span>Threat ring</div>
+            <div><span class="dot risk"></span>Risk overlay</div>
+          </div>
+          <a id="brief-launch" class="brief-launch" href="/brief" target="_blank" rel="noopener">View 60-Second Brief</a>
+        </section>
+
+        <section class="coordinate-panel">
+          <div class="panel-head">
+            <h2>Coordinate Readout</h2>
+            <span class="pill">Map Click</span>
+          </div>
+          <div class="coord-grid">
+            <div class="coord-card">
+              <span>Latitude</span>
+              <strong id="coord-lat">-</strong>
+            </div>
+            <div class="coord-card">
+              <span>Longitude</span>
+              <strong id="coord-lon">-</strong>
+            </div>
+            <div class="coord-card coord-card-wide">
+              <span>MGRS</span>
+              <strong id="coord-mgrs">Click on the map</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="timeline-panel">
+          <div class="panel-head">
+            <h2>Mission Replay</h2>
+            <span id="tick-label" class="pill">Tick 0</span>
+          </div>
+          <div class="timeline-block">
+            <input id="timeline-slider" type="range" min="0" max="0" value="0" />
+            <div class="timeline-meta">
+              <span id="timeline-window">00:00</span>
+              <span id="timeline-markers">Detections: 0</span>
+            </div>
+          </div>
+          <div class="timeline-controls">
+            <button id="pause-replay" type="button" class="secondary">Pause</button>
+            <button id="play-replay" type="button">Play</button>
+            <button id="rewind-replay" type="button" class="secondary">Rewind</button>
+            <button id="speed-2x" type="button" class="secondary">2x</button>
+            <button id="speed-5x" type="button" class="secondary">5x</button>
+          </div>
+          <div id="timeline-entries" class="timeline-entries"></div>
+        </section>
+
+        <section class="aar-panel">
+          <div class="panel-head">
+            <h2>After-Action Report</h2>
+            <span id="aar-status" class="pill">Awaiting Completion</span>
+          </div>
+          <div class="button-row">
+            <button id="generate-aar" type="button" disabled>Generate AAR</button>
+            <button id="export-aar" type="button" class="secondary" disabled>Export Word</button>
+          </div>
+          <div id="aar-summary" class="upload-summary">Complete the scenario replay to unlock the AAR workflow.</div>
+          <pre id="aar-markdown" class="aar-markdown">No AAR generated yet.</pre>
+        </section>
+      </div>
+    </main>
+  </div>
+  <footer class="brand-footer">Scipio, a Ravelo Strategic Solutions, LLC product.</footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
