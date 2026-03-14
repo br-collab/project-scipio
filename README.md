@@ -1,0 +1,232 @@
+# Project Scipio
+
+Synthetic operations dashboard showing how planning inputs can move through a structured workflow into replayable mission state, event timelines, and after-action review outputs.
+
+## Purpose
+
+Project Scipio is a lightweight prototype built around a simple operating model:
+
+`OPORD -> Scenario -> Simulation -> AAR`
+
+The goal is not to replace planning. The goal is to show how planning artifacts can become structured, executable, reviewable inputs that support clearer analysis and shared understanding.
+
+All force, threat, and target data in this repository are synthetic so the project can be discussed and shared safely.
+
+## What The System Does
+
+The current prototype supports five connected steps:
+
+1. A user selects or uploads a planning document or scenario file.
+2. The backend normalizes that input into a consistent scenario structure.
+3. The simulation layer turns that scenario into tick-based replay state.
+4. The dashboard renders positions, detections, threats, and mission events.
+5. The system produces an AAR-style report and a short executive brief.
+
+This creates a more structured path from static document to operational discussion:
+
+`static document -> executable scenario -> replay analysis`
+
+## Key Features
+
+- Scenario loader for baseline synthetic scenarios and uploaded artifacts
+- OPORD-style ingestion for `.txt`, `.md`, `.json`, `.pdf`, and `.docx`
+- Tick-based replay with timeline controls and event generation
+- Patrol-sector reassignment controls
+- Blue-force sensor coverage and red-force threat ring overlays
+- Coordinate readout with MGRS support
+- Executive-style `60-Second Brief` page with Word export
+- AAR generation with Word export
+- Synthetic scenario schema for forces, sectors, risk zones, scripted events, and rules
+
+## Workflow
+
+Project Scipio is easiest to understand as a workflow rather than as a web app:
+
+1. Planning input enters the system through scenario selection or file upload.
+2. `ScenarioService` parses, validates, and normalizes the input.
+3. `SimulationService` computes replay state for a scenario and tick.
+4. Flask routes expose that state to the UI and export endpoints.
+5. The dashboard, AAR output, and brief page consume the same structured replay data.
+
+High-level flow:
+
+```text
++------------------+      +-------------------+      +-------------------+
+|  OPORD / JSON    | ---> | Scenario Service  | ---> | Simulation Service|
+|  Upload / Select |      | Parse + Normalize |      | Tick + Replay     |
++------------------+      +-------------------+      +-------------------+
+           |                           |                          |
+           v                           v                          v
++------------------+      +-------------------+      +-------------------+
+| Stored Scenario  |      | Dashboard Routes  | ---> | UI + AAR + Brief  |
+| JSON Artifacts   |      | Flask API Layer   |      | Map + Panels      |
++------------------+      +-------------------+      +-------------------+
+```
+
+For a deeper maintainer view, see [docs/architecture.md](docs/architecture.md).
+
+## Quick Start
+
+From the repository root:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+python -m flask --app app run --host=127.0.0.1 --port=8000 --no-reload
+```
+
+Open the dashboard at:
+
+```text
+http://127.0.0.1:8000
+```
+
+To restart with the helper script:
+
+```bash
+bash scripts/restart_server.sh
+```
+
+Notes:
+
+- If `8000` is already in use, start the app on another port such as `8011`.
+- Run the app from the project virtual environment. If plain `python3 app.py` fails with `ModuleNotFoundError`, the shell is using the wrong Python interpreter.
+
+## How To Run The Project Reliably
+
+Recommended local sequence:
+
+1. Activate `.venv`.
+2. Install dependencies from `requirements.txt`.
+3. Start Flask with `python -m flask --app app run --host=127.0.0.1 --port=8000 --no-reload`.
+4. Open the dashboard in the browser.
+
+This project assumes a local development workflow, not a production deployment configuration.
+
+## Repository Structure
+
+```text
+Project Scipio/
+  app.py
+  routes/
+  services/
+  models/
+  scenarios/
+  static/
+  templates/
+  utils/
+  scripts/
+  tests/
+  docs/
+```
+
+Directory summary:
+
+- `app.py`: Flask app creation and service wiring
+- `routes/`: HTTP routes for dashboard pages, APIs, uploads, and exports
+- `services/`: ingestion, simulation, AAR, and brief logic
+- `models/`: reusable scenario data structures
+- `scenarios/`: baseline synthetic scenarios and uploaded scenario artifacts
+- `static/`: CSS, JavaScript, and icon assets
+- `templates/`: dashboard and brief HTML templates
+- `utils/`: shared helpers such as geospatial utilities
+- `scripts/`: local development helpers
+- `tests/`: pytest coverage for key backend behavior
+- `docs/`: architecture notes and screenshots
+
+## Scenario Model
+
+Example synthetic scenario shape used by the simulator:
+
+```json
+{
+  "scenario_id": "default",
+  "operation": "Project Scipio",
+  "theater": "Cuba",
+  "tick_seconds": 300,
+  "duration_ticks": 12,
+  "blue_forces": [
+    {
+      "id": "UAV-ALPHA",
+      "type": "MQ-9",
+      "platform": "ISR UAV",
+      "speed_kts": 92,
+      "sensor_radius_km": 24,
+      "track": [[23.1106, -82.3666], [22.85, -81.9]]
+    }
+  ],
+  "red_forces": [
+    {
+      "id": "SAM-001",
+      "type": "SAM Site",
+      "lat": 22.9892,
+      "lon": -82.4091,
+      "threat_radius_km": 32
+    }
+  ],
+  "patrol_sectors": [
+    {
+      "id": "SEC-NORTH",
+      "name": "Northern Screen",
+      "lat": 22.75,
+      "lon": -81.3,
+      "radius_km": 85
+    }
+  ],
+  "risk_zones": [
+    {
+      "id": "RISK-ALPHA",
+      "name": "Integrated Air Defense Arc",
+      "lat": 22.6,
+      "lon": -81.2,
+      "radius_km": 160,
+      "level": "high"
+    }
+  ],
+  "scripted_events": [
+    {
+      "tick": 1,
+      "type": "report",
+      "summary": "Mission replay initialized"
+    }
+  ]
+}
+```
+
+Reference examples live in `scenarios/`, including `default.json`, `opn_taino.json`, `opn_taino_surge.json`, and `azure_sentinel_001.json`.
+
+## Screenshots
+
+The repository includes screenshot directories for current views and supporting artifacts:
+
+- `docs/screenshots/dashboard/`
+- `docs/screenshots/opord_upload/`
+- `docs/screenshots/aar/`
+
+Useful README visuals to embed later:
+
+- dashboard home view
+- successful OPORD upload state
+- replay timeline in motion
+- 60-Second Brief page
+
+## Current Limitations
+
+- All operational data is synthetic
+- Uploaded OPORD quality depends on the current parser and mapping rules
+- The replay engine is intentionally lightweight and not physics-based
+- Export and ingestion flows are still prototype-grade
+- The dashboard is designed for demonstration and discussion, not operational deployment
+
+## Roadmap
+
+- Improve OPORD-to-scenario synthesis so uploads change replay behavior more clearly
+- Expand scenario validation and confidence reporting
+- Improve export formatting for executive and print workflows
+- Increase test coverage around upload, replay, and export behavior
+- Continue refining presentation quality for portfolio and interview use
+
+## License
+
+This project is released under the MIT License. See `LICENSE` for details.

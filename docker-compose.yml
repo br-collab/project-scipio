@@ -1,0 +1,12 @@
+services:
+  project_scipio:
+    build:
+      context: .
+    container_name: project_scipio
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./scenarios:/app/scenarios
+    environment:
+      FLASK_APP: app
+    restart: unless-stopped

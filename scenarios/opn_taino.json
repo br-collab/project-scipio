@@ -1,0 +1,88 @@
+{
+  "scenario_id": "opn_taino",
+  "operation": "Project Scipio",
+  "theater": "Cuba",
+  "description": "Synthetic ISR patrol and threat-monitoring vignette over the Cuba theater.",
+  "center": { "lat": 21.5218, "lon": -77.7812 },
+  "tick_seconds": 300,
+  "duration_ticks": 12,
+  "blue_forces": [
+    {
+      "id": "UAV-ALPHA",
+      "name": "North Orbit",
+      "type": "MQ-9",
+      "platform": "ISR UAV",
+      "heading": 120,
+      "speed_kts": 92,
+      "sensor_radius_km": 24,
+      "default_sector_id": "SEC-NORTH",
+      "track": [
+        [23.1106, -82.3666],
+        [22.8500, -81.9000],
+        [22.5200, -81.2200],
+        [22.1600, -80.4800],
+        [21.8500, -79.7200],
+        [21.6500, -79.1500]
+      ]
+    },
+    {
+      "id": "UAV-BRAVO",
+      "name": "Eastern Sweep",
+      "platform": "ISR UAV",
+      "heading": 300,
+      "speed_kts": 88,
+      "sensor_radius_km": 20,
+      "default_sector_id": "SEC-EAST",
+      "track": [
+        [20.0208, -75.8267],
+        [20.4500, -76.4500],
+        [20.9000, -77.2000],
+        [21.4000, -77.9500],
+        [21.9500, -78.7000],
+        [22.3000, -79.2200]
+      ]
+    },
+    {
+      "id": "MPA-CHARLIE",
+      "name": "Windward Patrol",
+      "platform": "Maritime Patrol Aircraft",
+      "heading": 285,
+      "speed_kts": 105,
+      "sensor_radius_km": 30,
+      "default_sector_id": "SEC-WINDWARD",
+      "track": [
+        [20.1450, -75.2090],
+        [20.3800, -75.7800],
+        [20.7200, -76.3500],
+        [21.0600, -76.9800],
+        [21.4200, -77.6200],
+        [21.7600, -78.1800]
+      ]
+    }
+  ],
+  "red_forces": [
+    { "id": "SAM-001", "name": "Havana SAM Belt", "lat": 22.9892, "lon": -82.4091, "priority": "high", "type": "SAM Site", "threat_radius_km": 32 },
+    { "id": "SAM-002", "name": "Central SAM Battery", "lat": 22.4069, "lon": -79.9647, "priority": "high", "type": "SAM Site", "threat_radius_km": 28 },
+    { "id": "SAM-003", "name": "Santiago SAM Battery", "lat": 20.0208, "lon": -75.8353, "priority": "high", "type": "SAM Site", "threat_radius_km": 30 },
+    { "id": "RADAR-001", "name": "Matanzas Radar Node", "lat": 23.0411, "lon": -81.5775, "priority": "medium", "type": "Radar Node", "threat_radius_km": 45 },
+    { "id": "RADAR-002", "name": "Camaguey Radar Node", "lat": 21.3808, "lon": -77.9169, "priority": "medium", "type": "Radar Node", "threat_radius_km": 40 },
+    { "id": "LOG-001", "name": "Western Logistics Depot", "lat": 22.2200, "lon": -80.3200, "priority": "medium", "type": "Logistics Depot", "threat_radius_km": 12 },
+    { "id": "LOG-002", "name": "Eastern Logistics Depot", "lat": 20.3200, "lon": -76.9200, "priority": "medium", "type": "Logistics Depot", "threat_radius_km": 12 }
+  ],
+  "patrol_sectors": [
+    { "id": "SEC-NORTH", "name": "Northern Screen", "lat": 22.7500, "lon": -81.3000, "radius_km": 85, "focus": "capital access corridors" },
+    { "id": "SEC-EAST", "name": "Eastern Transit", "lat": 20.9000, "lon": -76.9000, "radius_km": 90, "focus": "radar and runway routes" },
+    { "id": "SEC-WINDWARD", "name": "Windward Approach", "lat": 20.6000, "lon": -75.6500, "radius_km": 80, "focus": "maritime access lanes" }
+  ],
+  "risk_zones": [
+    { "id": "RISK-ALPHA", "name": "Integrated Air Defense Arc", "lat": 22.6000, "lon": -81.2000, "radius_km": 160, "weight": 4, "level": "high" },
+    { "id": "RISK-BRAVO", "name": "Logistics Disruption Zone", "lat": 21.1000, "lon": -77.5000, "radius_km": 120, "weight": 3, "level": "medium" },
+    { "id": "RISK-CHARLIE", "name": "Coastal Intercept Corridor", "lat": 20.5000, "lon": -75.9000, "radius_km": 95, "weight": 2, "level": "medium" }
+  ],
+  "scripted_events": [
+    { "tick": 1, "type": "report", "severity": "info", "summary": "Mission replay initialized", "detail": "Synthetic baseline patrol tracks loaded into the dashboard." },
+    { "tick": 3, "type": "warning", "severity": "medium", "summary": "Radar node emissions increase", "detail": "Camaguey radar node shows elevated synthetic search activity." },
+    { "tick": 6, "type": "warning", "severity": "high", "summary": "SAM battery alert posture rises", "detail": "Central SAM Battery expands its threat posture in the synthetic theater model." },
+    { "tick": 9, "type": "report", "severity": "info", "summary": "Maritime patrol updates surface picture", "detail": "MPA-CHARLIE refreshes synthetic contact tracks along the Windward approach." }
+  ]
+}

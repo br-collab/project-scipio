@@ -1,0 +1,185 @@
+{
+  "scenario_id": "AZURE_SENTINEL_001",
+  "scenario_name": "Operation Azure Sentinel",
+  "operation": "Operation Azure Sentinel",
+  "theater": "Cuba",
+  "description": "Single-UAV ISR watch over western Cuba focused on radar emissions, coastal missile tracking, and persistent sensor coverage.",
+  "center": {
+    "lat": 23.0815,
+    "lon": -81.9715
+  },
+  "tick_seconds": 300,
+  "duration_ticks": 12,
+  "blue_forces": [
+    {
+      "id": "UAV-ALPHA",
+      "name": "Azure Sentinel Orbit",
+      "type": "MQ-9",
+      "platform": "ISR UAV",
+      "heading": 100,
+      "speed_kts": 90,
+      "sensor_radius_km": 24,
+      "default_sector_id": "SEC-AZURE",
+      "track": [
+        [23.113, -82.366],
+        [23.18, -82.19],
+        [23.16, -81.98],
+        [23.08, -81.79],
+        [22.99, -81.63],
+        [23.05, -81.57]
+      ]
+    }
+  ],
+  "red_forces": [
+    {
+      "id": "SAM-001",
+      "name": "Matanzas Radar Node",
+      "lat": 23.05,
+      "lon": -81.577,
+      "priority": "medium",
+      "type": "SAM",
+      "threat_radius_km": 28
+    }
+  ],
+  "patrol_sectors": [
+    {
+      "id": "SEC-AZURE",
+      "name": "Azure Watchbox",
+      "lat": 23.0815,
+      "lon": -81.9715,
+      "radius_km": 55,
+      "focus": "hostile radar emissions and coastal missile watch"
+    }
+  ],
+  "risk_zones": [
+    {
+      "id": "RISK-AZURE-1",
+      "name": "Matanzas Coastal Threat Belt",
+      "lat": 23.05,
+      "lon": -81.577,
+      "radius_km": 65,
+      "weight": 3,
+      "level": "medium"
+    }
+  ],
+  "scripted_events": [
+    {
+      "tick": 1,
+      "type": "report",
+      "severity": "info",
+      "summary": "Identify hostile radar emissions",
+      "detail": "Azure Sentinel begins ISR collection against suspected radar activity."
+    },
+    {
+      "tick": 4,
+      "type": "warning",
+      "severity": "medium",
+      "summary": "Track coastal missile battery",
+      "detail": "UAV-ALPHA refines track quality on the coastal missile threat area."
+    },
+    {
+      "tick": 8,
+      "type": "report",
+      "severity": "info",
+      "summary": "Maintain ISR coverage",
+      "detail": "Persistent orbit remains on station to hold sensor coverage over the watchbox."
+    }
+  ],
+  "rules": [
+    {
+      "id": "activate_sam_on_radar_detection",
+      "condition": {
+        "type": "radar_detected",
+        "red_id": "SAM-001",
+        "name_contains": "radar"
+      },
+      "effects": [
+        {
+          "type": "set_flag",
+          "flag": "sam_activated",
+          "value": true
+        },
+        {
+          "type": "add_event",
+          "severity": "high",
+          "summary": "SAM activated",
+          "detail": "Radar detection triggered defensive activation at the Matanzas node."
+        },
+        {
+          "type": "add_risk",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "escalate_on_ring_entry",
+      "condition": {
+        "type": "uav_enters_ring",
+        "red_id": "SAM-001",
+        "unit_id": "UAV-ALPHA"
+      },
+      "effects": [
+        {
+          "type": "set_flag",
+          "flag": "threat_escalated",
+          "value": true
+        },
+        {
+          "type": "add_event",
+          "severity": "high",
+          "summary": "Threat escalated",
+          "detail": "UAV-ALPHA entered the Matanzas threat ring and the threat posture escalated."
+        },
+        {
+          "type": "add_risk",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "humanitarian_penalty_on_roe_violation",
+      "condition": {
+        "type": "roe_violated"
+      },
+      "effects": [
+        {
+          "type": "set_flag",
+          "flag": "humanitarian_penalty",
+          "value": true
+        },
+        {
+          "type": "add_event",
+          "severity": "high",
+          "summary": "Humanitarian penalty assessed",
+          "detail": "ROE violation triggered a humanitarian penalty in the scenario logic."
+        },
+        {
+          "type": "add_risk",
+          "value": 2
+        }
+      ]
+    }
+  ],
+  "objectives": [
+    "Identify hostile radar emissions",
+    "Track coastal missile battery",
+    "Maintain ISR coverage"
+  ],
+  "blufor": {
+    "uav": 1
+  },
+  "opfor": {
+    "sam": 1
+  },
+  "phases": [
+    "Initial collection",
+    "Threat track refinement",
+    "Persistent coverage"
+  ],
+  "triggers": [],
+  "evaluation_metrics": [
+    "Radar emission identification",
+    "Missile battery track continuity",
+    "ISR coverage persistence"
+  ]
+}
