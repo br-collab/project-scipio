@@ -365,7 +365,24 @@ Recommended local sequence:
 3. Start Flask with `python -m flask --app app run --host=127.0.0.1 --port=8000 --no-reload`.
 4. Open the dashboard in the browser.
 
-This project assumes a local development workflow, not a production deployment configuration.
+## GitHub Deployment Workflow
+
+Project Scipio now treats the local checkout as the editing and validation environment, with GitHub as the system of record for deployment.
+
+Recommended flow:
+
+1. Make and test changes locally.
+2. Commit and push to `main`.
+3. Let GitHub Actions run the automated test suite from `.github/workflows/ci.yml`.
+4. Let your hosting platform deploy from GitHub after the push succeeds.
+
+Deployment readiness in this repository:
+
+- `Dockerfile` starts the Flask app with `gunicorn` and respects the `PORT` environment variable used by cloud hosts.
+- `requirements.txt` includes the production WSGI server dependency.
+- `scripts/start.sh` remains available for local verification.
+
+The remaining live-hosting step is to connect the GitHub repository to a deployment provider such as Render, Railway, or Fly.io.
 
 ## Repository Structure
 
